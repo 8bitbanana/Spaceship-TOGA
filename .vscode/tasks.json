@@ -19,7 +19,7 @@
                 "Shader.cpp",
                 "Texture.cpp",
                 "ResourceManager.cpp",
-                "Sphere.cpp",
+                // "Sphere.cpp",
                 "Model.cpp",
                 // "Octagon.cpp",
                 // "Cube.cpp",
