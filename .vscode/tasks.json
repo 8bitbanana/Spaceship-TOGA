@@ -21,6 +21,7 @@
                 "ResourceManager.cpp",
                 // "Sphere.cpp",
                 "Model.cpp",
+                "Ship.cpp",
                 // "Octagon.cpp",
                 // "Cube.cpp",
                 // "Model.cpp",

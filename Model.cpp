@@ -26,6 +26,7 @@ Model::Model() {
 }
 
 Model::Model(const string& filename) {
+    SetShader("wireframe");
     Import(filename);
     Init();
 }
@@ -33,13 +34,12 @@ Model::Model(const string& filename) {
 Model::Model(const string& filename, vec3 position, vec3 rotation, vec3 size)
  : Position(position), Rotation(rotation), Size(size) {
     Rotation = glm::radians(Rotation);
+    SetShader("wireframe");
     Import(filename);
     Init();
 }
 
 void Model::Init() {
-    SetShader("wireframe");
-
     glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glGenBuffers(1, &EBO);
@@ -118,7 +118,6 @@ void Model::LoadMeshesFromNode(const aiNode* node, aiMesh** meshes, glm::mat4 cu
 }
 
 void Model::Import(const string& filename) {
-    printf("Loading Model \"%s\"\n", filename.c_str());
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(filename,
         // aiProcess_CalcTangentSpace |
@@ -134,12 +133,6 @@ void Model::Import(const string& filename) {
 
     LoadMeshesFromNode(scene->mRootNode, scene->mMeshes, glm::mat4(1.0));
     
-    // auto mesh = Meshes[0];
-    // Meshes = vector<Mesh>();
-    // Meshes.push_back(mesh);
-    //Meshes = {Meshes[1]};
-
-    printf("Mesh Count - %d\n", Meshes.size());
 
     unsigned int indexOffset = 0;
     for (auto mesh : Meshes) {
@@ -153,13 +146,5 @@ void Model::Import(const string& filename) {
         indexOffset += mesh.Vertices.size();
     }
     Meshes = vector<Mesh>(); // clear mesh list, no longer used.
-
-    // for (auto ind : Indices) {
-    //     auto vert = Vertices[ind];
-    //     printf("ind %d x%f y%f z%f\n", ind, vert.x, vert.y, vert.z);
-    // }
-
-    printf("%d Verts, %d Inds\n", Vertices.size(), Indices.size());
-    printf("Importing done.\n");
 }
 
