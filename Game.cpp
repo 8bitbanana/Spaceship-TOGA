@@ -33,7 +33,7 @@ void Game::Init()
 {
 	ResourceManager::LoadShader("Shaders/baseproj.vert", "Shaders/baseproj.frag", nullptr, "baseproj");
 	ResourceManager::LoadShader("Shaders/wireframe.vert", "Shaders/wireframe.frag", "Shaders/wireframe.geom", "wireframe");
-	ResourceManager::LoadShader("Shaders/wireframe.vert", "Shaders/wireframe-pulse.frag", "Shaders/wireframe.geom", "wireframe-pulse");
+	ResourceManager::LoadShader("Shaders/wireframe-pulse.vert", "Shaders/wireframe-pulse.frag", "Shaders/wireframe-pulse.geom", "wireframe-pulse");
 
 
 	CurrentProjection = glm::perspective(glm::radians(45.0f), float(Width / Height), 0.1f, 100.0f);
@@ -76,8 +76,6 @@ void Game::ProcessInput(GLfloat dt)
 	lookDirection.z = sin(glm::radians(CameraRot.y)) * cos(glm::radians(CameraRot.x));
 	lookDirection = glm::normalize(lookDirection);
 
-	//printf("x%f y%f z%f\n", direction.x, direction.y, direction.z);
-
 	glm::vec3 moveDirection = lookDirection;
 	moveDirection.y = 0;
 
@@ -100,6 +98,9 @@ void Game::ProcessInput(GLfloat dt)
 	if (Keys[GLFW_KEY_LEFT_SHIFT]) {
 		CameraPos -= cameraUp * speed * dt;
 	}
+	// printf("----\n");
+	// printf("POS x%f y%f z&f \n", CameraPos.x, CameraPos.y, (float)CameraPos.z);
+	// printf("ROT x%f y%f z%f \n", lookDirection.x, lookDirection.y, lookDirection.z);
 
 	CurrentView = glm::lookAt(CameraPos, CameraPos + lookDirection, cameraUp);
 }

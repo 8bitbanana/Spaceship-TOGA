@@ -38,7 +38,7 @@ Model::Model(const string& filename, vec3 position, vec3 rotation, vec3 size)
 }
 
 void Model::Init() {
-    shader = ResourceManager::GetShader("wireframe");
+    SetShader("wireframe");
 
     glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);

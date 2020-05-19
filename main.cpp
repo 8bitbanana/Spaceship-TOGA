@@ -16,8 +16,9 @@ void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GL
 void focus_callback(GLFWwindow* window, int focused);
 void set_cursor_state(GLFWwindow* window, bool locked);
 
-const GLuint SCREEN_WIDTH = 800;
-const GLuint SCREEN_HEIGHT = 800;
+const GLuint SCREEN_WIDTH = 1280;
+const GLuint SCREEN_HEIGHT = 720;
+const float ASPECT = (float)SCREEN_WIDTH / SCREEN_HEIGHT;
 
 bool CursorLocked;
 
@@ -156,11 +157,14 @@ void focus_callback(GLFWwindow* window, int focused) {
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);
-	ArcadeGame.ResizeEvent(width, height);
+	int w = height * ASPECT;
+	int left = (width - w) / 2;
+	glViewport(left, 0, w, height);
+	// current_screen_size.x = w;
+	// current_screen_size.y = height;
 }
 
 void message_callback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s/n", (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity, message);
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n", (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""), type, severity, message);
 }
