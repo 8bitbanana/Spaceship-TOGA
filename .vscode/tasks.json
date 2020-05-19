@@ -1,0 +1,44 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "shell: cl.exe build active file",
+            "command": "cl.exe",
+            "args": [
+                "/IC:\\Lib\\include",
+                "/Zi",
+                "/EHsc",
+                "/wd4477", // suppress printf type warnings (C4477)
+                "/Fe:",
+                "build.exe",
+                "opengl32.lib",
+                "glew32.lib",
+                "glfw3dll.lib",
+                "assimp-vc142-mtd.lib",
+                "Shader.cpp",
+                "Texture.cpp",
+                "ResourceManager.cpp",
+                "Sphere.cpp",
+                "Model.cpp",
+                // "Octagon.cpp",
+                // "Cube.cpp",
+                // "Model.cpp",
+                "Game.cpp",
+                "main.cpp",
+                "/link",
+                "/LIBPATH:C:\\Lib\\msvc\\lib"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$msCompile"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
