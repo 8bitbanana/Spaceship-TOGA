@@ -2,12 +2,14 @@
 
 #include <algorithm>
 
-Ship::Ship() : Model("Models\\ship.obj") {
+Ship::Ship() : Model("ship") {
     SetShader("wireframe-pulse");
 }
 
 void Ship::Update(GLfloat dt) {
-    const float speed = 7.5;
+    const float strafespeed = 10.0;
+    const float manualSpeed = 2.5;
+    const float forcedSpeed = 15.0;
     const float maxbank = glm::radians(17.0);
     const float bankspeed = glm::radians(100.0);
 
@@ -18,19 +20,20 @@ void Ship::Update(GLfloat dt) {
     float targetBank = 0;
 
     if (Input.Forward) {
-        Position += FORWARD * speed * dt;
+        Position += FORWARD * manualSpeed * dt;
     }
     if (Input.Left) {
-        Position -= RIGHT * speed * dt;
+        Position -= RIGHT * strafespeed * dt;
         targetBank = maxbank;
     }
     if (Input.Right) {
-        Position += RIGHT * speed * dt;
+        Position += RIGHT * strafespeed * dt;
         targetBank = -maxbank;
     }
     if (Input.Backward) {
-        Position -= FORWARD * speed * dt;
+        Position -= FORWARD * manualSpeed * dt;
     }
+    Position += FORWARD * forcedSpeed * dt;
 
     if (targetBank > Rotation.z) {
         Rotation.z += bankspeed * dt;

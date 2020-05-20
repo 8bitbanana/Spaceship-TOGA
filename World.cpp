@@ -14,11 +14,13 @@ void World::Update(GLfloat dt, glm::vec3 shipPos) {
 
     auto shipChunk = ChunkCoord::from_vector(shipPos);
 
-    int xmin  = shipChunk.x - 1;
-    int xmax = shipChunk.x + 1;
+    int xmin  = shipChunk.x - 5;
+    int xmax = shipChunk.x + 5;
     
-    int zmin = shipChunk.z - 10;
-    int zmax = shipChunk.z + 1;
+    int zmin = shipChunk.z - 15;
+    int zmax = shipChunk.z + 2;
+
+    int counter = 0;
 
     // Unload old out-of-bounds chunks
     for (auto i : chunks) {
@@ -29,7 +31,12 @@ void World::Update(GLfloat dt, glm::vec3 shipPos) {
             coord.z > zmax) {
             delete chunk;
             chunks.erase(coord);
+            counter++;
         }
+    }
+    if (counter > 0) {
+        printf("Unloaded %d chunks\n", counter);
+        counter = 0;
     }
 
     // Load in in new in-bounds chunks
@@ -39,8 +46,12 @@ void World::Update(GLfloat dt, glm::vec3 shipPos) {
             if (chunks.count(coord) == 0) {
                 WorldChunk* chunk = new WorldChunk(coord);
                 chunks[coord] = chunk;
+                counter++;
             }
         }
+    }
+    if (counter > 0) {
+        printf("Loaded %d chunks\n", counter);
     }
 
     for (auto const& x : chunks) {
@@ -65,7 +76,6 @@ World::WorldChunk::WorldChunk(ChunkCoord pos) {
             0,
             Util::random_float(0, CHUNK_SIZE)
         };
-        offset = {0,0,0}; // stub
         obs->Position = pos.to_vector() + offset;
         obstacles.push_back(obs);
     }
@@ -88,6 +98,6 @@ void World::WorldChunk::Draw(glm::mat4 projection, glm::mat4 view) {
     }
 }
 
-World::Obstacle::Obstacle() : Model("Models\\rook.obj") {
+World::Obstacle::Obstacle() : Model("rook") {
     Colour = glm::vec4(1,0,0,1);
 }

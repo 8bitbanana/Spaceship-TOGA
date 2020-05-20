@@ -31,7 +31,8 @@ void Game::Init()
 	ResourceManager::LoadShader("Shaders/baseproj.vert", "Shaders/baseproj.frag", nullptr, "baseproj");
 	ResourceManager::LoadShader("Shaders/wireframe.vert", "Shaders/wireframe.frag", "Shaders/wireframe.geom", "wireframe");
 	ResourceManager::LoadShader("Shaders/wireframe-pulse.vert", "Shaders/wireframe-pulse.frag", "Shaders/wireframe-pulse.geom", "wireframe-pulse");
-
+	ResourceManager::LoadMesh("Models/rook.obj", "rook");
+	ResourceManager::LoadMesh("Models/ship.obj", "ship");
 
 	CurrentProjection = glm::perspective(glm::radians(60.0f), float(Width) / Height, 0.1f, 100.0f);
 	ship = new Ship();

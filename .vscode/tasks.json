@@ -12,23 +12,22 @@
                 "/wd4477", // suppress printf type warnings (C4477)
                 "/Fe:",
                 "build.exe",
+                
                 "opengl32.lib",
                 "glew32.lib",
                 "glfw3dll.lib",
                 "assimp-vc142-mtd.lib",
+
                 "Util.cpp",
                 "Shader.cpp",
                 "Texture.cpp",
                 "ResourceManager.cpp",
-                // "Sphere.cpp",
                 "Model.cpp",
                 "Ship.cpp",
                 "World.cpp",
-                // "Octagon.cpp",
-                // "Cube.cpp",
-                // "Model.cpp",
                 "Game.cpp",
                 "main.cpp",
+
                 "/link",
                 "/LIBPATH:C:\\Lib\\msvc\\lib"
             ],
