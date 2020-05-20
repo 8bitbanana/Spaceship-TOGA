@@ -46,7 +46,13 @@
         "xstddef": "cpp",
         "xtr1common": "cpp",
         "xtree": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "ctime": "cpp",
+        "random": "cpp",
+        "unordered_map": "cpp",
+        "functional": "cpp",
+        "list": "cpp",
+        "xhash": "cpp"
     },
     "files.exclude": {
         "*.dll": true,

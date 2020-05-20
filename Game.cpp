@@ -2,6 +2,7 @@
 #include "ResourceManager.h"
 #include "Model.h"
 #include "Ship.h"
+#include "World.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -13,6 +14,7 @@ const glm::vec3 cameraOffset = {0.0, 1.0, 1.0};
 
 Ship* ship;
 vector<Model*> rooks;
+World* world;
 
 Game::Game(GLuint width, GLuint height) : Width(width), Height(height), CameraPos(0, 0, 5.0f), CameraRot(0, -90.0f, 0)
 {
@@ -40,12 +42,15 @@ void Game::Init()
 		rooks.push_back(new Model("Models/rook.obj"));
 		rooks[i]->Position = {5.0 * (i%5), 0, 5.0 * (i/5)};
 	}
+
+	world = new World();
 }
 
 void Game::Update(GLfloat dt)
 {
 	ProcessInput(dt);
 	ship->Update(dt);
+	world->Update(dt, ship->Position);
 }
 
 void Game::ProcessInput(GLfloat dt)
@@ -60,6 +65,7 @@ void Game::ProcessInput(GLfloat dt)
 
 	ship->Input.Forward = Keys[GLFW_KEY_W];
     ship->Input.Left = Keys[GLFW_KEY_A];
+	ship->Input.Backward = Keys[GLFW_KEY_S];
     ship->Input.Right = Keys[GLFW_KEY_D];
     
 	CameraPos = ship->Position + cameraOffset;
@@ -72,6 +78,7 @@ void Game::Draw()
 	ship->Draw(CurrentProjection, CurrentView);
 	for (auto rook : rooks)
 		rook->Draw(CurrentProjection, CurrentView);
+	world->Draw(CurrentProjection, CurrentView);
 }
 
 void Game::ResizeEvent(GLfloat width, GLfloat height)

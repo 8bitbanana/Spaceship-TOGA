@@ -133,7 +133,7 @@ void Model::Import(const string& filename) {
 
     LoadMeshesFromNode(scene->mRootNode, scene->mMeshes, glm::mat4(1.0));
     
-
+    // Extract the verts from the meshes into one vector
     unsigned int indexOffset = 0;
     for (auto mesh : Meshes) {
         for (auto vert : mesh.Vertices) {

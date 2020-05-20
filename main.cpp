@@ -7,6 +7,7 @@
 #include <iostream>
 
 #include "Game.h"
+#include "Util.h"
 
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
@@ -26,6 +27,8 @@ bool CursorLocked;
 Game ArcadeGame(SCREEN_WIDTH, SCREEN_HEIGHT);
 
 int main(int argc, char* argv[]) {
+	Util::init_random();
+
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);

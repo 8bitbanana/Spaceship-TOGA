@@ -8,7 +8,7 @@ public:
     void SetInput(GLboolean keys[1024]);
 
     struct InputStruct {
-        bool Forward, Left, Right = false;
+        bool Forward, Backward, Left, Right = false;
     };
     InputStruct Input;
 };
