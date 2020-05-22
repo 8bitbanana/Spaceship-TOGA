@@ -4,9 +4,14 @@
 #include <GLFW\glfw3.h>
 #include <glm/glm.hpp>
 
+enum GameMode {
+	Start, Play, Dead
+};
+
 class Game
 {
 public:
+	GameMode Mode;
 	GLboolean Keys[1024];
 	GLuint Width, Height;
 	glm::vec2 Mouse;
@@ -25,4 +30,7 @@ private:
 	glm::highp_mat4 CurrentView;
 	void ProcessInput(GLfloat dt);
 	void UpdateCamera();
+	GLfloat DeathCutsceneProgress;
+	bool DeathCutscene(GLfloat dt);
+	void InitMode(GameMode mode);
 };

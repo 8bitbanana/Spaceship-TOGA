@@ -22,7 +22,7 @@ void main() {
 //	else if (distance==GEdgeDistance[2]) gl_FragColor = vec4(0, 0, 0.52, 1);
 //	else discard;
 
-	vec4 colorPulse = vec4(0, 1, 1, pulse((-CenterDistance) + time));
+	vec4 colorPulse = vec4(color.xyz, color.w * pulse((-CenterDistance) + time));
 
 	if (edgeDistance < linewidth)
 		gl_FragColor = colorPulse;

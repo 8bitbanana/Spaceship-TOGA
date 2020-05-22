@@ -10,12 +10,16 @@
 
 #include <iostream>
 
-const glm::vec3 cameraOffset = {0.0, 1.0, 1.0};
+const glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, -1.0f);
+const glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+const glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
 
 Ship* ship;
 World* world;
 
-Game::Game(GLuint width, GLuint height) : Width(width), Height(height), CameraPos(0, 0, 5.0f), CameraRot(0, -90.0f, 0)
+Game::Game(GLuint width, GLuint height)
+	: Mode(Start), Width(width), Height(height),
+	CameraPos(0, 0, 5.0f), CameraRot(0, -90.0f, 0)
 {
 
 }
@@ -34,32 +38,68 @@ void Game::Init()
 	ResourceManager::LoadMesh("Models/ship.obj", "ship");
 
 	CurrentProjection = glm::perspective(glm::radians(60.0f), float(Width) / Height, 0.1f, 100.0f);
-	ship = new Ship();
-	ship->Colour = glm::vec4(0.188, 0.933, 1.0, 1.0);
-	ship->SetShader("wireframe-pulse");
 
-	world = new World();
+	InitMode(Mode);
+}
+
+void Game::InitMode(GameMode mode) {
+	switch (mode) {
+		case Start: {
+			ship = new Ship();
+		}
+		break;
+		case Play: {
+			world = new World();
+		}
+		break;
+		case Dead: {
+			DeathCutsceneProgress = 3.0;
+		}
+		break;
+	}
+	Mode = mode;
 }
 
 void Game::Update(GLfloat dt)
 {
-	ProcessInput(dt);
-	ship->Update(dt);
-	UpdateCamera();
-	world->Update(dt, ship->Position);
-
-	bool collision = false;
-	for (int i=0; i<ship->CollisionPoint_Count; i++) {
-		auto point = ship->GetCollisionPoint(i);
-		point += ship->Position;
-
-		if (world->IsCollision(point)) {
-			collision = true;
-			break;
+	switch (Mode) {
+		case Start: {
+			InitMode(Play);
 		}
-	}
-	if (collision) {
-		
+		break;
+		case Play: {
+			const float ShipDamage_Multi = 250.0;
+
+			ProcessInput(dt);
+			ship->Update(dt);
+			UpdateCamera();
+			world->Update(dt, ship->Position);
+
+			bool collision = false;
+			for (int i=0; i<ship->CollisionPoint_Count; i++) {
+				auto point = ship->GetCollisionPoint(i);
+				point += ship->Position;
+
+				if (world->IsCollision(point)) {
+					collision = true;
+					break;
+				}
+			}
+			if (collision) {
+				bool dead = ship->TakeDamage(ShipDamage_Multi * dt);
+				if (dead) {
+					InitMode(Dead);
+				}
+			}	
+		}
+		break;
+		case Dead: {
+			bool done = DeathCutscene(dt);
+			if (done) {
+				InitMode(Start);
+			}
+		}
+		break;
 	}
 }
 
@@ -72,16 +112,31 @@ void Game::ProcessInput(GLfloat dt)
 }
 
 void Game::UpdateCamera() {
-	const glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, -1.0f);
-	const glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-	const glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
-
 	const vec3 lookOffset = {0.0, 1.0, -1.0};
 	const vec3 cameraOffset = {0.0, 2.8, 8.0};
 
 	CameraPos = ship->Position + cameraOffset;
 
 	CurrentView = glm::lookAt(ship->Position+cameraOffset, ship->Position+lookOffset, cameraUp);
+}
+
+bool Game::DeathCutscene(GLfloat dt) {
+	const vec3 viewStart = {0.0, 2.8, 8.0};
+	const vec3 viewEnd = {2.0, 3.8, 7.0};
+	const vec3 lookStart = {0.0, 1.0, -1.0};
+	const vec3 lookEnd = {0.0, 0.5, -1.0};
+
+	vec3 view = glm::mix(viewStart, viewEnd, 1-DeathCutsceneProgress);
+	vec3 look = glm::mix(lookStart, lookEnd, 1-DeathCutsceneProgress);
+	CurrentView = glm::lookAt(ship->Position+view, ship->Position+look, cameraUp);
+
+	DeathCutsceneProgress -= dt;
+	if (DeathCutsceneProgress <= 0) {
+		DeathCutsceneProgress = 0;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void Game::Draw()
