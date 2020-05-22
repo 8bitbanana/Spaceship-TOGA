@@ -1,14 +1,21 @@
 #include "Util.h"
 
 #include <random>
+#include <chrono>
 
 namespace Util {
 
     std::minstd_rand engine;
 
     void init_random() {
+        auto time = std::chrono::high_resolution_clock().now();
+
+        unsigned int seed = *(unsigned int*)(void*)&time;
+
+        printf("Seed: %u", seed);
+
         engine = std::minstd_rand();
-        engine.seed(50);
+        engine.seed(seed);
     }
 
     unsigned int random() {

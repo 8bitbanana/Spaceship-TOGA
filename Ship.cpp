@@ -92,6 +92,7 @@ bool Ship::TakeDamage(GLfloat damage) {
     Health -= damage;
     if (Health <= 0) {
         Health = 0;
+        Colour.w = 1;
         return true;
     } else {
         return false;

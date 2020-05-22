@@ -53,6 +53,7 @@ void Game::InitMode(GameMode mode) {
 		}
 		break;
 		case Dead: {
+			ship->SetShader("wireframe");
 			DeathCutsceneProgress = 3.0;
 		}
 		break;
