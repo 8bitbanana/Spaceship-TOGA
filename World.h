@@ -30,7 +30,9 @@ struct ChunkCoord {
 // https://stackoverflow.com/a/17017281/8708443
 template <> struct hash<ChunkCoord> {
     std::size_t operator()(const ChunkCoord& k) const {
-        return (hash<int>()(k.x) ^ (hash<int>()(k.z) << 1));
+        auto a = hash<int>()(k.x);
+        auto b = hash<int>()(k.z);
+        return hash<size_t>()(a ^ (b << 1));
     }
 };
 
@@ -38,6 +40,8 @@ class World {
 public:
     World();
     ~World();
+
+    bool IsCollision(glm::vec3 point);
     void Update(GLfloat dt, glm::vec3 shipPos);
     void Draw(glm::mat4 projection, glm::mat4 view);
 
@@ -45,12 +49,19 @@ private:
     class Obstacle : public Model {
     public:
         Obstacle();
+        bool IsCollision(glm::vec3 point);
+        void Update(GLfloat dt);
+    private:
+        float PingColour;
+        float CollColour;
     };
 
     class WorldChunk {
     public:
         WorldChunk(ChunkCoord pos);
         ~WorldChunk();
+
+        bool IsCollision(glm::vec3 point);
 
         void Update(GLfloat dt);
         void Draw(glm::mat4 projection, glm::mat4 view);

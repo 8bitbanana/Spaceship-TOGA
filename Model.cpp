@@ -47,19 +47,19 @@ void Model::SetShader(string name) {
 }
 
 void Model::Update(GLfloat dt) {
-
+	
 }
 
 void Model::Draw(glm::mat4 projection, glm::mat4 view) {
     shader.Use();
-	glm::mat4 model = glm::mat4(1.0f);
-	
-	model = glm::scale(model, Size);
-	model = glm::translate(model, Position);
-	glm::quat rot = glm::quat(Rotation);
-	model *= glm::toMat4(rot);
 
-	auto pvm = projection * view * model;
+	currentModel = glm::mat4(1.0);
+	currentModel = glm::scale(currentModel, Size);
+	currentModel = glm::translate(currentModel, Position);
+	glm::quat rot = glm::quat(Rotation);
+	currentModel *= glm::toMat4(rot);
+
+	auto pvm = projection * view * currentModel;
 
 	shader.SetMatrix4("pvm", pvm);
 	shader.SetFloat("linewidth", 0.02f);

@@ -21,7 +21,8 @@ public:
 private:
 	glm::vec3 CameraPos;
 	glm::vec3 CameraRot;
-	glm::mat4 CurrentProjection;
-	glm::mat4 CurrentView;
+	glm::highp_mat4 CurrentProjection;
+	glm::highp_mat4 CurrentView;
 	void ProcessInput(GLfloat dt);
+	void UpdateCamera();
 };

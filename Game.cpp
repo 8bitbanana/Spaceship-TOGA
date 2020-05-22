@@ -51,12 +51,33 @@ void Game::Update(GLfloat dt)
 {
 	ProcessInput(dt);
 	ship->Update(dt);
+	UpdateCamera();
 	world->Update(dt, ship->Position);
+
+	bool collision = false;
+	for (int i=0; i<ship->CollisionPoint_Count; i++) {
+		auto point = ship->GetCollisionPoint(i);
+		point += ship->Position;
+
+		if (world->IsCollision(point)) {
+			collision = true;
+			break;
+		}
+	}
+	if (collision) {
+		
+	}
 }
 
 void Game::ProcessInput(GLfloat dt)
 {
-	const float speed = 2.5f;
+	ship->Input.Forward = Keys[GLFW_KEY_W];
+    ship->Input.Left = Keys[GLFW_KEY_A];
+	ship->Input.Backward = Keys[GLFW_KEY_S];
+    ship->Input.Right = Keys[GLFW_KEY_D];
+}
+
+void Game::UpdateCamera() {
 	const glm::vec3 cameraForward = glm::vec3(0.0f, 0.0f, -1.0f);
 	const glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 	const glm::vec3 cameraRight = glm::vec3(1.0f, 0.0f, 0.0f);
@@ -64,11 +85,6 @@ void Game::ProcessInput(GLfloat dt)
 	const vec3 lookOffset = {0.0, 1.0, -1.0};
 	const vec3 cameraOffset = {0.0, 2.8, 8.0};
 
-	ship->Input.Forward = Keys[GLFW_KEY_W];
-    ship->Input.Left = Keys[GLFW_KEY_A];
-	ship->Input.Backward = Keys[GLFW_KEY_S];
-    ship->Input.Right = Keys[GLFW_KEY_D];
-    
 	CameraPos = ship->Position + cameraOffset;
 
 	CurrentView = glm::lookAt(ship->Position+cameraOffset, ship->Position+lookOffset, cameraUp);

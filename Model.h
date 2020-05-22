@@ -28,11 +28,11 @@ public:
     glm::vec3 Rotation = glm::vec3(0);
     glm::vec3 Size = glm::vec3(1);
     glm::vec4 Colour = glm::vec4(1);
-    
+protected:
+    glm::highp_mat4 currentModel;
+    Mesh mesh;
 private:
     unsigned int VBO, VAO, EBO;
-
-    Mesh mesh;
     Shader shader;
 
     void Init();
