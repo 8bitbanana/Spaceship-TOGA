@@ -114,16 +114,20 @@ Mesh ResourceManager::loadMeshFromFile(string filename) {
     
     // Extract the verts from the meshes into one vector
     unsigned int indexOffset = 0;
+    vector<glm::vec3> verts;
+    vector<GLuint> inds;
+
     for (auto mesh : assimpMeshes) {
         for (auto vert : mesh.Vertices) {
             glm::vec4 vert4 = glm::vec4(vert, 1);
-            outmesh.Vertices.push_back((glm::vec3)(vert4 * mesh.Transform));
+            verts.push_back((glm::vec3)(vert4 * mesh.Transform));
         }   
         for (auto ind : mesh.Indices) {
-            outmesh.Indices.push_back(ind + indexOffset);
+            inds.push_back(ind + indexOffset);
         }
         indexOffset += mesh.Vertices.size();
     }
+    outmesh.Import(verts, inds);
     return outmesh;
 }
 

@@ -21,6 +21,7 @@
                 "Util.cpp",
                 "Shader.cpp",
                 "Texture.cpp",
+                "Mesh.cpp",
                 "ResourceManager.cpp",
                 "Model.cpp",
                 "Ship.cpp",

@@ -10,15 +10,12 @@
 
 #include "Texture.h"
 #include "Shader.h"
+#include "Mesh.h"
 
 using std::string;
 using std::map;
 using std::vector;
 
-struct Mesh {
-    vector<glm::vec3> Vertices;
-    vector<GLuint> Indices;
-};
 
 struct AssimpMesh {
     vector<glm::vec3> Vertices;
