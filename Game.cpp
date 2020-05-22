@@ -13,7 +13,6 @@
 const glm::vec3 cameraOffset = {0.0, 1.0, 1.0};
 
 Ship* ship;
-vector<Model*> rooks;
 World* world;
 
 Game::Game(GLuint width, GLuint height) : Width(width), Height(height), CameraPos(0, 0, 5.0f), CameraRot(0, -90.0f, 0)
@@ -38,11 +37,6 @@ void Game::Init()
 	ship = new Ship();
 	ship->Colour = glm::vec4(0.188, 0.933, 1.0, 1.0);
 	ship->SetShader("wireframe-pulse");
-
-	for (int i=0; i<10; i++) {
-		rooks.push_back(new Model("Models/rook.obj"));
-		rooks[i]->Position = {5.0 * (i%5), 0, 5.0 * (i/5)};
-	}
 
 	world = new World();
 }
@@ -71,10 +65,10 @@ void Game::Update(GLfloat dt)
 
 void Game::ProcessInput(GLfloat dt)
 {
-	ship->Input.Forward = Keys[GLFW_KEY_W];
-    ship->Input.Left = Keys[GLFW_KEY_A];
-	ship->Input.Backward = Keys[GLFW_KEY_S];
-    ship->Input.Right = Keys[GLFW_KEY_D];
+	ship->Input.Forward = Keys[GLFW_KEY_W] | Keys[GLFW_KEY_UP];
+    ship->Input.Left = Keys[GLFW_KEY_A] | Keys[GLFW_KEY_LEFT];
+	ship->Input.Backward = Keys[GLFW_KEY_S] | Keys[GLFW_KEY_DOWN];
+    ship->Input.Right = Keys[GLFW_KEY_D] | Keys[GLFW_KEY_RIGHT];
 }
 
 void Game::UpdateCamera() {
@@ -93,8 +87,6 @@ void Game::UpdateCamera() {
 void Game::Draw()
 {
 	ship->Draw(CurrentProjection, CurrentView);
-	for (auto rook : rooks)
-		rook->Draw(CurrentProjection, CurrentView);
 	world->Draw(CurrentProjection, CurrentView);
 }
 

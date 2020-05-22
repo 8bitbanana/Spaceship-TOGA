@@ -11,9 +11,9 @@ World::~World() {
 }
 
 void World::Update(GLfloat dt, glm::vec3 shipPos) {
+    const int chunkStartZ = -5;
 
     auto shipChunk = ChunkCoord::from_vector(shipPos);
-
     int xmin  = shipChunk.x - 7;
     int xmax = shipChunk.x + 7;
     
@@ -40,7 +40,7 @@ void World::Update(GLfloat dt, glm::vec3 shipPos) {
     for (int x=xmin; x<=xmax; x++) {
         for (int z=zmin; z<=zmax; z++) {
             ChunkCoord coord = {x, z};
-            if (chunks.count(coord) == 0) {
+            if (chunks.count(coord) == 0 && z<chunkStartZ) {
                 WorldChunk* chunk = new WorldChunk(coord);
                 chunks[coord] = chunk;
             }

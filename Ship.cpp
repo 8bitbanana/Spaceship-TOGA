@@ -19,16 +19,18 @@ Ship::Ship() : Model("ship") {
     collisionPoints[0] = glm::vec3(0);
     collisionPoints[1] = leftmost;
     collisionPoints[2] = rightmost;
+    collisionPoints[3] = leftmost / 2.0f;
+    collisionPoints[4] = rightmost / 2.0f;
 }
 
 void Ship::Update(GLfloat dt) {
-    const float strafespeed = 10.0;
+    const float strafespeed = 15.0;
     const float manualSpeed = 2.5;
     const float maxForcedSpeed = 25.0f;
     const float forcedAccelleration = 0.5f;
     
-    const float maxbank = glm::radians(17.0);
-    const float bankspeed = glm::radians(100.0);
+    const float maxbank = glm::radians(25.0);
+    const float bankspeed = glm::radians(150.0);
 
     const glm::vec3 FORWARD = {0, 0, -1.0};
     const glm::vec3 RIGHT = {1.0, 0, 0};
@@ -50,6 +52,7 @@ void Ship::Update(GLfloat dt) {
     if (Input.Backward) {
         Position -= FORWARD * manualSpeed * dt;
     }
+    if (Input.Left && Input.Right) {targetBank = 0;}
     Position += FORWARD * ForcedSpeed * dt;
 
     if (targetBank > Rotation.z) {
