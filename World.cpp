@@ -123,6 +123,7 @@ bool World::WorldChunk::IsCollision(glm::vec3 point) {
 
 World::Obstacle::Obstacle() : Model("rook") {
     PingColour = 0.0f;
+    CollColour = 0.0f;
     Colour = glm::vec4(1,0,0,1);
 }
 
