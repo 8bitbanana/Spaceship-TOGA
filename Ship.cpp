@@ -104,8 +104,9 @@ void Ship::Update(GLfloat dt) {
     }
 }
 
-bool Ship::TakeDamage(GLfloat damage) {
-    Health -= damage;
+bool Ship::TakeDamage(GLfloat dt) {
+    const float Damage_Multi = 16.0;
+    Health -= (dt * Damage_Multi * ForcedSpeed);
     if (Health <= 0) {
         Health = 0;
         Colour.w = 1;

@@ -92,8 +92,6 @@ void Game::Update(GLfloat dt)
 		}
 		break;
 		case Play: {
-			const float ShipDamage_Multi = 250.0;
-
 			ProcessInput(dt);
 			ship->Update(dt);
 			UpdateCamera();
@@ -110,7 +108,7 @@ void Game::Update(GLfloat dt)
 				}
 			}
 			if (collision) {
-				bool dead = ship->TakeDamage(ShipDamage_Multi * dt);
+				bool dead = ship->TakeDamage(dt);
 				if (dead) {
 					InitMode(Dead);
 				}
