@@ -33,7 +33,6 @@ void Ship::Pulse() {
 
 void Ship::Update(GLfloat dt) {
     const float strafespeed = 15.0;
-    const float manualSpeed = 2.5;
     const float maxForcedSpeed = 40.0f;
     const float forcedAccelleration = 0.5f;
     
@@ -47,9 +46,6 @@ void Ship::Update(GLfloat dt) {
     float targetBank = 0;
 
     if (IsMoving) {
-        if (Input.Forward) {
-            Position += FORWARD * manualSpeed * dt;
-        }
         if (Input.Left) {
             Position -= RIGHT * strafespeed * dt;
             targetBank = maxbank;
@@ -57,9 +53,6 @@ void Ship::Update(GLfloat dt) {
         if (Input.Right) {
             Position += RIGHT * strafespeed * dt;
             targetBank = -maxbank;
-        }
-        if (Input.Backward) {
-            Position -= FORWARD * manualSpeed * dt;
         }
         if (Input.Left && Input.Right) {targetBank = 0;}
         Position += FORWARD * ForcedSpeed * dt;
