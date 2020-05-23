@@ -1,6 +1,5 @@
 #include "Game.h"
 #include "ResourceManager.h"
-#include "Model.h"
 #include "Ship.h"
 #include "World.h"
 
@@ -46,10 +45,17 @@ void Game::InitMode(GameMode mode) {
 	switch (mode) {
 		case Start: {
 			ship = new Ship();
+			world = new World();
+			StartCutsceneRotation = 300;
+		}
+		break;
+		case Intro: {
+			IntroCutsceneProgress = 3.0;
+			IntroCutsceneCountdown = 3;
 		}
 		break;
 		case Play: {
-			world = new World();
+			ship->StartMoving();	
 		}
 		break;
 		case Dead: {
@@ -65,7 +71,24 @@ void Game::Update(GLfloat dt)
 {
 	switch (Mode) {
 		case Start: {
-			InitMode(Play);
+			StartCutscene(dt);
+			for (int i=0; i<1024; i++) {
+				if (!Keys[i]) {continue;}
+				if (i == GLFW_KEY_ESCAPE) {continue;}
+				if (i >= GLFW_KEY_PAGE_UP) {continue;}
+				InitMode(Intro);
+			}
+			world->Update(dt, ship->Position);
+		}
+		break;
+		case Intro: {
+			bool done = IntroCutscene(dt);
+			UpdateCamera();
+			world->Update(dt, ship->Position);
+			ship->Update(dt);
+			if (done) {
+				InitMode(Play);
+			}
 		}
 		break;
 		case Play: {
@@ -112,6 +135,21 @@ void Game::ProcessInput(GLfloat dt)
     ship->Input.Right = Keys[GLFW_KEY_D] | Keys[GLFW_KEY_RIGHT];
 }
 
+bool Game::IntroCutscene(GLfloat dt) {
+	IntroCutsceneProgress -= dt;
+	if (IntroCutsceneProgress < IntroCutsceneCountdown) {
+		IntroCutsceneCountdown -= 1;
+		ship->Pulse();
+	}
+
+	if (IntroCutsceneProgress <= 0) {
+		IntroCutsceneProgress = 0;
+		return true;
+	} else {
+		return false;
+	}
+}
+
 void Game::UpdateCamera() {
 	const vec3 lookOffset = {0.0, 1.0, -1.0};
 	const vec3 cameraOffset = {0.0, 2.8, 8.0};
@@ -119,6 +157,22 @@ void Game::UpdateCamera() {
 	CameraPos = ship->Position + cameraOffset;
 
 	CurrentView = glm::lookAt(ship->Position+cameraOffset, ship->Position+lookOffset, cameraUp);
+}
+
+void Game::StartCutscene(GLfloat dt) {
+	const GLfloat rotationSpeed = 10.0f;
+	const vec3 view = {0.0, 2.0, 5.0};
+	const vec3 look = {0.0, 1.0, 0.5};
+
+	glm::mat4 rotationMat(1);
+	rotationMat = glm::rotate(rotationMat, glm::radians(StartCutsceneRotation), {0.0, 1.0, 0.0});
+	vec3 rotated_view = glm::vec4(view, 1) * rotationMat;
+
+	CurrentView = glm::lookAt(ship->Position+rotated_view, ship->Position+look, cameraUp);
+
+	StartCutsceneRotation += rotationSpeed * dt;
+	if (StartCutsceneRotation > 360)
+		StartCutsceneRotation -= 360;
 }
 
 bool Game::DeathCutscene(GLfloat dt) {
@@ -142,8 +196,10 @@ bool Game::DeathCutscene(GLfloat dt) {
 
 void Game::Draw()
 {
-	ship->Draw(CurrentProjection, CurrentView);
-	world->Draw(CurrentProjection, CurrentView);
+	if (ship != nullptr)
+		ship->Draw(CurrentProjection, CurrentView);
+	if (world != nullptr)
+		world->Draw(CurrentProjection, CurrentView);
 }
 
 void Game::ResizeEvent(GLfloat width, GLfloat height)

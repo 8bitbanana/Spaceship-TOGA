@@ -8,6 +8,7 @@ Ship::Ship() : Model("ship") {
     SetShader("wireframe-pulse");
     Colour = glm::vec4(0, 1, 1, 1);
 
+    IsMoving = false;
     ForcedSpeed = 15.0;
     Health = MaxHealth;
 
@@ -26,6 +27,10 @@ Ship::Ship() : Model("ship") {
     collisionPoints[4] = rightmost / 2.0f;
 }
 
+void Ship::Pulse() {
+    PulseAmount = 1.2;
+}
+
 void Ship::Update(GLfloat dt) {
     const float strafespeed = 15.0;
     const float manualSpeed = 2.5;
@@ -41,35 +46,42 @@ void Ship::Update(GLfloat dt) {
 
     float targetBank = 0;
 
-    if (Input.Forward) {
-        Position += FORWARD * manualSpeed * dt;
-    }
-    if (Input.Left) {
-        Position -= RIGHT * strafespeed * dt;
-        targetBank = maxbank;
-    }
-    if (Input.Right) {
-        Position += RIGHT * strafespeed * dt;
-        targetBank = -maxbank;
-    }
-    if (Input.Backward) {
-        Position -= FORWARD * manualSpeed * dt;
-    }
-    if (Input.Left && Input.Right) {targetBank = 0;}
-    Position += FORWARD * ForcedSpeed * dt;
+    if (IsMoving) {
+        if (Input.Forward) {
+            Position += FORWARD * manualSpeed * dt;
+        }
+        if (Input.Left) {
+            Position -= RIGHT * strafespeed * dt;
+            targetBank = maxbank;
+        }
+        if (Input.Right) {
+            Position += RIGHT * strafespeed * dt;
+            targetBank = -maxbank;
+        }
+        if (Input.Backward) {
+            Position -= FORWARD * manualSpeed * dt;
+        }
+        if (Input.Left && Input.Right) {targetBank = 0;}
+        Position += FORWARD * ForcedSpeed * dt;
 
-    if (targetBank > Rotation.z) {
-        Rotation.z += bankspeed * dt;
-        if (Rotation.z > targetBank)
-            Rotation.z = targetBank;
-    } else if (targetBank < Rotation.z) {
-        Rotation.z -= bankspeed * dt;
-        if (Rotation.z < targetBank)
-            Rotation.z = targetBank;
+        if (targetBank > Rotation.z) {
+            Rotation.z += bankspeed * dt;
+            if (Rotation.z > targetBank)
+                Rotation.z = targetBank;
+        } else if (targetBank < Rotation.z) {
+            Rotation.z -= bankspeed * dt;
+            if (Rotation.z < targetBank)
+                Rotation.z = targetBank;
+        }
+
+        if (ForcedSpeed < maxForcedSpeed) {
+            ForcedSpeed += dt * forcedAccelleration;
+        }
     }
 
-    if (ForcedSpeed < maxForcedSpeed) {
-        ForcedSpeed += dt * forcedAccelleration;
+    PulseAmount -= dt;
+    if (PulseAmount < 0) {
+        PulseAmount = 0;
     }
 
     float HealthRatio = Health / MaxHealth;
@@ -78,8 +90,12 @@ void Ship::Update(GLfloat dt) {
         glm::vec4(0, 1, 1, 1), // full health (blue)
         HealthRatio
     );
-
-
+    Colour = glm::mix(
+        Colour,
+        glm::vec4(1,1,1,1),
+        PulseAmount
+    );
+ 
     if (Health / MaxHealth < 0.3) {
         float flashSpeed = (HealthRatio < 0.15) ? 25 : 10;
         // This could be faster
@@ -97,6 +113,10 @@ bool Ship::TakeDamage(GLfloat damage) {
     } else {
         return false;
     }
+}
+
+void Ship::StartMoving() {
+    IsMoving = true;
 }
 
 glm::vec3 Ship::GetCollisionPoint(unsigned int i) {

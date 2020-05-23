@@ -6,6 +6,8 @@ public:
     Ship();
     void Update(GLfloat dt);
     bool TakeDamage(GLfloat damage);
+    void StartMoving();
+    void Pulse();
 
 
     struct InputStruct {
@@ -17,8 +19,10 @@ public:
 
     InputStruct Input;
 private:
+    bool IsMoving;
     const float MaxHealth = 100;
     float Health;
     float ForcedSpeed;
+    float PulseAmount;
     glm::vec3 collisionPoints[5];
 };
