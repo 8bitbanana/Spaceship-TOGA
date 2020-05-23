@@ -44,16 +44,18 @@ int main(int argc, char* argv[]) {
 
 	set_cursor_state(window, true);
 
+	// Get GLFW callback functions
 	glfwSetKeyCallback(window, key_callback);
-	//glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetWindowFocusCallback(window, focus_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
 
+	// Enable depth testing and transparency
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+	// Enable OpenGL error message output
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(message_callback, nullptr);
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
@@ -69,6 +71,8 @@ int main(int argc, char* argv[]) {
 		lastFrame = currentFrame;
 		glfwPollEvents();
 
+		// Sends the mouse movement of to ArcadeGame
+		// Currently unused
 		double xpos, ypos;
 		glfwGetCursorPos(window, &xpos, &ypos);
 		mouse_callback(window, xpos, ypos);
@@ -79,12 +83,7 @@ int main(int argc, char* argv[]) {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		ArcadeGame.Draw();
 
-		float sleep = (2.f/10.f) - deltaTime;
-		/*std::cout << sleep << std::endl;*/
-		/*while (glfwGetTime() - lastFrame < 1.0f / 60) {
-			std::this_thread::sleep_for(std::chrono::milliseconds(1));
-		}*/
-
+		// Limit to 120 fps
 		while (glfwGetTime() < lastFrame + 1.0/120) {
 			std::this_thread::sleep_for(std::chrono::microseconds(10));
 		}
@@ -106,7 +105,6 @@ void set_cursor_state(GLFWwindow* window, bool locked) {
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-		//glfwSetWindowShouldClose(window, GL_TRUE);
 		set_cursor_state(window, false);
 	}
 	if (key >= 0 && key < 1024) {

@@ -60,6 +60,7 @@ void World::Draw(glm::mat4 projection, glm::mat4 view) {
     }
 }
 
+// Check the ship's chunk and all neighbouring chunks for collisions
 bool World::IsCollision(glm::vec3 point) {
     ChunkCoord centerchunk = ChunkCoord::from_vector(point);
     ChunkCoord coords[9];
@@ -74,6 +75,7 @@ bool World::IsCollision(glm::vec3 point) {
     coords[8] = {centerchunk.x+1, centerchunk.z+1};
 
     for (auto coord : coords) {
+        // If the checked chunk exits, ask it if there are any collisions
         if (chunks.count(coord)>0 && chunks.at(coord)->IsCollision(point))
             return true;
     }
@@ -81,7 +83,7 @@ bool World::IsCollision(glm::vec3 point) {
 }
 
 World::WorldChunk::WorldChunk(ChunkCoord pos) {
-    //for (unsigned int i=0; i<(Util::random()%3); i++) {
+    // Currently each chunk only has one obstacle, but this could change.
     for (unsigned int i=0; i<1; i++) {
         Obstacle* obs = new Obstacle();
         glm::vec3 offset = {
@@ -106,13 +108,12 @@ void World::WorldChunk::Update(GLfloat dt) {
 }
 
 void World::WorldChunk::Draw(glm::mat4 projection, glm::mat4 view) {
-    int a = 0;
-    a++;
     for (auto obstacle : obstacles) {
         obstacle->Draw(projection, view);
     }
 }
 
+// Check each obstacle in the chunk if there is a collision
 bool World::WorldChunk::IsCollision(glm::vec3 point) {
     for (auto obstacle : obstacles) {
         if (obstacle->IsCollision(point))
@@ -122,29 +123,23 @@ bool World::WorldChunk::IsCollision(glm::vec3 point) {
 }
 
 World::Obstacle::Obstacle() : Model("rook") {
-    PingColour = 0.0f;
     CollColour = 0.0f;
     Colour = glm::vec4(1,0,0,1);
 }
 
 void World::Obstacle::Update(GLfloat dt) {
-    if (PingColour > 0) {
-        PingColour -= dt;
-    } else if (PingColour < 0) {
-        PingColour = 0;
-    }
     if (CollColour > 0) {
         CollColour -= dt;
     } else if (CollColour < 0) {
         CollColour = 0;
     }
-    Colour = glm::vec4(1, PingColour, CollColour, 1);
+    Colour = glm::vec4(1, 0, CollColour, 1);
 }
 
+// Collision ignores the Y axis
 bool World::Obstacle::IsCollision(glm::vec3 point) {
     vec3 a = {point.x, 0, point.z};
     vec3 b = {Position.x, 0, Position.z};
-    //PingColour = 1.0f;
     bool result = glm::distance(a,b) < 0.75;
     if (result) {CollColour = 1.0f;}
     return result;

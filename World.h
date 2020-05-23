@@ -27,6 +27,7 @@ struct ChunkCoord {
     }
 };
 
+// ChunkCoord hashing function for use as a map key
 // https://stackoverflow.com/a/17017281/8708443
 template <> struct hash<ChunkCoord> {
     std::size_t operator()(const ChunkCoord& k) const {
@@ -52,7 +53,6 @@ private:
         bool IsCollision(glm::vec3 point);
         void Update(GLfloat dt);
     private:
-        float PingColour;
         float CollColour;
     };
 

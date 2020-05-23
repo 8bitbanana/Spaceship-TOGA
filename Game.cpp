@@ -41,6 +41,12 @@ void Game::Init()
 	InitMode(Mode);
 }
 
+// Game Modes
+// Start - The initial cutscene, ends when the user presses any key
+// Intro - The 3 second countdown before gameplay
+// Game  - The game loop
+// Death - The 3 second death cutscene
+
 void Game::InitMode(GameMode mode) {
 	switch (mode) {
 		case Start: {
@@ -72,8 +78,10 @@ void Game::Update(GLfloat dt)
 	switch (Mode) {
 		case Start: {
 			StartCutscene(dt);
+			// Check if a key is pressed
 			for (int i=0; i<1024; i++) {
 				if (!Keys[i]) {continue;}
+				// Ignore the escape key and function keys
 				if (i == GLFW_KEY_ESCAPE) {continue;}
 				if (i >= GLFW_KEY_PAGE_UP) {continue;}
 				InitMode(Intro);
@@ -97,6 +105,8 @@ void Game::Update(GLfloat dt)
 			UpdateCamera();
 			world->Update(dt, ship->Position);
 
+			// Iterate through each of the ship's collision points,
+			// asking the world if it is a collision
 			bool collision = false;
 			for (int i=0; i<ship->CollisionPoint_Count; i++) {
 				auto point = ship->GetCollisionPoint(i);
@@ -133,21 +143,8 @@ void Game::ProcessInput(GLfloat dt)
     ship->Input.Right = Keys[GLFW_KEY_D] | Keys[GLFW_KEY_RIGHT];
 }
 
-bool Game::IntroCutscene(GLfloat dt) {
-	IntroCutsceneProgress -= dt;
-	if (IntroCutsceneProgress < IntroCutsceneCountdown) {
-		IntroCutsceneCountdown -= 1;
-		ship->Pulse();
-	}
 
-	if (IntroCutsceneProgress <= 0) {
-		IntroCutsceneProgress = 0;
-		return true;
-	} else {
-		return false;
-	}
-}
-
+// Fix the camera behind the ship
 void Game::UpdateCamera() {
 	const vec3 lookOffset = {0.0, 1.0, -1.0};
 	const vec3 cameraOffset = {0.0, 2.8, 8.0};
@@ -157,6 +154,7 @@ void Game::UpdateCamera() {
 	CurrentView = glm::lookAt(ship->Position+cameraOffset, ship->Position+lookOffset, cameraUp);
 }
 
+// Start cutscene - the camera rotates around the ship
 void Game::StartCutscene(GLfloat dt) {
 	const GLfloat rotationSpeed = 10.0f;
 	const vec3 view = {0.0, 2.0, 5.0};
@@ -173,6 +171,24 @@ void Game::StartCutscene(GLfloat dt) {
 		StartCutsceneRotation -= 360;
 }
 
+// Intro cutscene - the ship pulses each second
+bool Game::IntroCutscene(GLfloat dt) {
+	IntroCutsceneProgress -= dt;
+	// Pulse the ship's colour on the countdown
+	if (IntroCutsceneProgress < IntroCutsceneCountdown) {
+		IntroCutsceneCountdown -= 1;
+		ship->Pulse();
+	}
+
+	if (IntroCutsceneProgress <= 0) {
+		IntroCutsceneProgress = 0;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+// Death cutscene - the camera pans around the ship for 3 seconds
 bool Game::DeathCutscene(GLfloat dt) {
 	const vec3 viewStart = {0.0, 2.8, 8.0};
 	const vec3 viewEnd = {2.0, 3.8, 7.0};

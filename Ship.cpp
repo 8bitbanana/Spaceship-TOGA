@@ -27,6 +27,7 @@ Ship::Ship() : Model("ship") {
     collisionPoints[4] = rightmost / 2.0f;
 }
 
+// White colour pulse - used in the intro cutscene
 void Ship::Pulse() {
     PulseAmount = 1.2;
 }
@@ -46,6 +47,7 @@ void Ship::Update(GLfloat dt) {
     float targetBank = 0;
 
     if (IsMoving) {
+        // Handle position
         if (Input.Left) {
             Position -= RIGHT * strafespeed * dt;
             targetBank = maxbank;
@@ -57,6 +59,7 @@ void Ship::Update(GLfloat dt) {
         if (Input.Left && Input.Right) {targetBank = 0;}
         Position += FORWARD * ForcedSpeed * dt;
 
+        // Handle bank rotation
         if (targetBank > Rotation.z) {
             Rotation.z += bankspeed * dt;
             if (Rotation.z > targetBank)
@@ -72,26 +75,29 @@ void Ship::Update(GLfloat dt) {
         }
     }
 
-    PulseAmount -= dt;
-    if (PulseAmount < 0) {
-        PulseAmount = 0;
-    }
-
+    // Dull colour as the ship gets damaged
     float HealthRatio = Health / MaxHealth;
     Colour = glm::mix(
         glm::vec4(1, 0.65, 0, 1), // no health (orange)
         glm::vec4(0, 1, 1, 1), // full health (blue)
         HealthRatio
     );
+
+    // While pulse used in the intro cutscene
     Colour = glm::mix(
         Colour,
         glm::vec4(1,1,1,1),
         PulseAmount
     );
+    PulseAmount -= dt;
+    if (PulseAmount < 0) {
+        PulseAmount = 0;
+    }
  
+    // Flash at low health
     if (Health / MaxHealth < 0.3) {
+        // Flash even faster at critical health
         float flashSpeed = (HealthRatio < 0.15) ? 25 : 10;
-        // This could be faster
         int mod = (int)(glfwGetTime() * flashSpeed) % 6;
         Colour.w = (mod == 0) ? 0 : 1;
     }
@@ -99,10 +105,11 @@ void Ship::Update(GLfloat dt) {
 
 bool Ship::TakeDamage(GLfloat dt) {
     const float Damage_Multi = 16.0;
+    // Damage scales to speed
     Health -= (dt * Damage_Multi * ForcedSpeed);
     if (Health <= 0) {
         Health = 0;
-        Colour.w = 1;
+        Colour.w = 1; // Make sure we are visible during the death screen
         return true;
     } else {
         return false;
