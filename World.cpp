@@ -11,6 +11,7 @@ World::~World() {
 }
 
 void World::Update(GLfloat dt, glm::vec3 shipPos) {
+    // Deny chunk loads above this Z-pos
     const int chunkStartZ = -5;
 
     auto shipChunk = ChunkCoord::from_vector(shipPos);

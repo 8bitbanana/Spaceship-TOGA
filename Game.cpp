@@ -25,7 +25,8 @@ Game::Game(GLuint width, GLuint height)
 
 Game::~Game()
 {
-	
+	delete world;
+	delete ship;
 }
 
 void Game::Init()
